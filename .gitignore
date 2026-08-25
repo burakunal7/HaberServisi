@@ -1,0 +1,41 @@
+# GİZLİ / hassas (ASLA commit edilmez) - gerçek API/panel şifreleri
+config.yaml
+config.prod.yaml
+*.secret
+*.key
+
+# durum / veri
+state.sqlite3
+state.sqlite3-journal
+state.sqlite3-wal
+state.sqlite3-shm
+logs/
+
+# test çıktısı (GB'larca medya)
+test_cikti/
+
+# derleme çıktıları
+dist/
+build/
+build_tmp/
+HaberServisi.exe
+*.spec
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# vendor / referans
+aa-api.pdf
+
+# DHA exe kopyaları
+6.6/
+*.part
+
+# editör / IDE
+.claude/
+.vscode/
+.idea/

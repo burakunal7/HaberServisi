@@ -1,0 +1,66 @@
+
+global:
+  poll_interval_seconds: 5        # çekiciler sürekli/canlı dinler
+  max_media_retries: 5            # medya inmezse kaç kez denensin (sonra metni yaz + arıza işaretle)
+  max_pages: 3
+  log_dir: logs
+  state_db: state.sqlite3
+  seen_retention_days: 30         # eski 'görüldü' kayıtlarını temizle (DB şişmesin)
+  # RETENTION: kaynak klasörlerde şu günden eski dosyaları her gün siler (0 = kapalı)
+  retention_days: 2
+  cleanup_hour: 4                 # her gün saat 04:00'te temizlik
+  web_host: 0.0.0.0
+  web_port: 8770
+  # PANEL GİRİŞİ (güvenlik): doldurulursa panel kullanıcı adı/şifre ister. Prod'da MUTLAKA doldur.
+  web_user: '<PANEL_KULLANICI>'
+  web_password: '<PANEL_SIFRE>'
+  download_media: true
+
+agencies:
+  # ---- ANKA: API çekici ----
+  - name: ANKA
+    type: ankahaber
+    enabled: true
+    base_url: https://abone-api.ankahaber.net
+    username: '<ANKA_KULLANICI>'
+    password: '<ANKA_SIFRE>'
+    output_dir: 'D:\ANKA'
+    path_prefix: 'D:\ANKA'
+    verify_ssl: false             # medya host cert doğrulanamıyorsa false
+    max_catchup_pages: 30
+    catchup_days: 1               # en fazla son 1 günü çeker
+
+  # ---- AA: API çekici (Anadolu Ajansı) ----
+  - name: AA
+    type: aa
+    enabled: true
+    base_url: https://api.aa.com.tr
+    username: '<AA_KULLANICI>'    # 7 haneli API kullanıcı adı
+    password: '<AA_SIFRE>'
+    output_dir: 'D:\AA'
+    catchup_days: 1
+    overlap_minutes: 5
+    photo_size: print             # abonelik: print/web
+    video_size: web               # abonelik: sd/web
+    min_request_interval: 0.5     # AA 500ms zorunlu
+
+  # ---- DHA: bekçi (exe izlenir, durursa yeniden başlatılır) ----
+  - name: DHA
+    type: watchdog
+    enabled: true
+    watch_dir: 'D:\DHA_YENI'
+    process_name: 'DHA Abone.exe' # panelde "uygulama açık/kapalı" gösterilir
+    stale_minutes: 60             # bu kadar akış yoksa kurtar
+    recovery_command: '<DHA_YENIDEN_BASLATMA_KOMUTU>'
+    recovery_cooldown_minutes: 10
+    poll_interval_seconds: 120
+
+  # ---- Reuters: bekçi (Windows servisi izlenir) ----
+  - name: Reuters
+    type: watchdog
+    enabled: true
+    watch_dir: 'D:\Reuters'
+    stale_minutes: 60
+    recovery_command: 'net stop "<REUTERS_SERVIS_ADI>" & net start "<REUTERS_SERVIS_ADI>"'
+    recovery_cooldown_minutes: 15
+    poll_interval_seconds: 120
